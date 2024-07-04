@@ -1,15 +1,13 @@
 package com.test.service;
 
-import ch.qos.logback.core.status.ErrorStatus;
-import com.test.dto.UsuarioResponseDTO;
 import com.test.dto.UsuarioRequestDTO;
+import com.test.dto.UsuarioResponseDTO;
 import com.test.entity.Usuario;
 import com.test.repository.UsuarioRepository;
+import com.test.util.ValidateException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
@@ -19,6 +17,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 
     private static final String REGEX_EMAIL = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$";
+
+    @Value("${regex.password}")
+    private String REGEX_PASSWORD;
 
     @Autowired
     UsuarioRepository usuarioRepository;
@@ -30,11 +31,15 @@ public class UsuarioServiceImpl implements UsuarioService {
         List<Usuario> usuarios = consultarEmail(usuarioResponseRequestDTO.getEmail());
 
         if (!esEmailValido(usuarioResponseRequestDTO.getEmail())){
-            throw new ResponseStatusException( HttpStatus.BAD_REQUEST, "Email no valido");
+            throw new ValidateException("Email no valido");
+        }
+
+        if (!esPasswordValido(usuarioResponseRequestDTO.getPassword())){
+            throw new ValidateException("Password no Cumple no la seguridad");
         }
 
         if (!usuarios.isEmpty()){
-            throw new ResponseStatusException( HttpStatus.CONFLICT, "El correo ya registrado");
+            throw new ValidateException("El correo ya registrado");
         }
 
         usuarioRepository.save(Usuario.builder()
@@ -67,7 +72,11 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     }
 
-    public boolean esEmailValido(String email) {
+    private boolean esEmailValido(String email) {
             return email.matches(REGEX_EMAIL);
         }
+
+    private boolean esPasswordValido(String password) {
+        return password.matches(REGEX_PASSWORD);
+    }
 }
