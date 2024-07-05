@@ -8,9 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -36,6 +34,18 @@ public class UsuarioController {
         UsuarioResponseDTO usuarioResponse = UsuarioResponseDTO.builder().build();
         try {
              usuarioResponse = usuarioService.registar(usuarioResponseRequestDTO);
+        }catch (Exception e){
+            throw  e;
+        }
+        return ResponseEntity.ok(usuarioResponse);
+    }
+
+
+    @GetMapping(value = "/usuario", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UsuarioResponseDTO> registarUsuario( @RequestParam String email) {
+        UsuarioResponseDTO usuarioResponse = UsuarioResponseDTO.builder().build();
+        try {
+            usuarioResponse = usuarioService.consultar(email);
         }catch (Exception e){
             throw  e;
         }

@@ -8,4 +8,5 @@ public interface UsuarioService {
     UsuarioResponseDTO registar(UsuarioRequestDTO usuarioResponseRequestDTO) ;
 
 
+    UsuarioResponseDTO consultar(String email);
 }

@@ -63,6 +63,19 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .build();
     }
 
+    @Override
+    public UsuarioResponseDTO consultar(String email) {
+
+        List<Usuario> usuarios = consultarEmail(email);
+
+        return UsuarioResponseDTO.builder()
+                .id(usuarios.get(0).getId())
+                .fechaCreacion(usuarios.get(0).getFechaCreacion())
+                .fechaLastLogin(usuarios.get(0).getFechaLastLogin())
+                .fechaModificacion(usuarios.get(0).getFechaModificacion())
+                .usuarioActivo(usuarios.get(0).getUsuarioActivo())
+                .build();
+    }
 
 
     private List<Usuario> consultarEmail(String email)  {
